@@ -10,6 +10,7 @@ CREATE TABLE tb_pedido
     id              UUID PRIMARY KEY,
     data_pedido     timestamp,
     total           numeric(20,2),
+    status          varchar(20),
     cliente_id      UUID,
     foreign key (cliente_id) references tb_cliente(id)
 );

@@ -6,6 +6,8 @@ import com.vendas.vendasapi.entity.Cliente;
 import com.vendas.vendasapi.entity.ItemPedido;
 import com.vendas.vendasapi.entity.Pedido;
 import com.vendas.vendasapi.entity.Produto;
+import com.vendas.vendasapi.enums.StatusPedido;
+import com.vendas.vendasapi.exception.PedidoNaoEncontradoException;
 import com.vendas.vendasapi.exception.RegraNegocioException;
 import com.vendas.vendasapi.repository.ClientesRepository;
 import com.vendas.vendasapi.repository.ItemPedidoRepository;
@@ -16,8 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,6 +42,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itemPedido = converterItems(pedido, dto.getItems());
         pedidoRepository.save(pedido);
@@ -45,6 +50,21 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setItems(itemPedido);
 
         return pedido;
+    }
+
+    public Optional<Pedido> obterPedidoCompleto(UUID id) {
+        return pedidoRepository.findByIdFetchItems(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizarStatus(UUID id, StatusPedido statusPedido) {
+        pedidoRepository
+                .findById(id)
+                .map(pedido ->  {
+                    pedido.setStatus(statusPedido);
+                    return pedidoRepository.save(pedido);
+                }).orElseThrow(()->new PedidoNaoEncontradoException() );
     }
 
     public Pedido getPedidoById(UUID id) {
