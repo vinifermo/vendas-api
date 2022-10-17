@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -18,8 +20,10 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @NotEmpty(message = "Campo descrição é obrigatorio.")
     private String descricao;
 
+    @NotNull(message = "Campo preço é obrigatorio!")
     @Column(name = "preco_unitario")
     private BigDecimal preco;
 }

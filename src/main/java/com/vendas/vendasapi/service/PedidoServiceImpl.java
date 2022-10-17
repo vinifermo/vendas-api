@@ -14,6 +14,8 @@ import com.vendas.vendasapi.repository.ItemPedidoRepository;
 import com.vendas.vendasapi.repository.PedidoRepository;
 import com.vendas.vendasapi.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

@@ -14,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -26,29 +27,33 @@ import java.util.stream.Collectors;
 public class PedidoController {
     private final PedidoService pedidoService;
 
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UUID save(@RequestBody PedidoDTO dto) {
+    public UUID save(@RequestBody @Valid PedidoDTO dto) {
         Pedido pedido = pedidoService.salvar(dto);
         return pedido.getId();
     }
+
     @GetMapping("{id}")
-    public InformacoesPedidoDTO getById(@PathVariable UUID id){
+    @CrossOrigin(origins = "http://localhost:4200")
+    public InformacoesPedidoDTO getById(@PathVariable UUID id) {
         return pedidoService
                 .obterPedidoCompleto(id)
-                .map(pedido ->converter(pedido) )
+                .map(pedido -> converter(pedido))
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,"Pedido nao encontrado.")
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido nao encontrado.")
                 );
-
     }
+
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStatus(@PathVariable UUID id, @RequestBody AtualizacaoStatusPedidoDTO dto){
-    String novoStatus = dto.getNovoStatus();
+    public void updateStatus(@PathVariable UUID id, @RequestBody @Valid AtualizacaoStatusPedidoDTO dto) {
+        String novoStatus = dto.getNovoStatus();
         pedidoService.atualizarStatus(id, StatusPedido.valueOf(novoStatus));
     }
-private InformacoesPedidoDTO converter(Pedido pedido){
+
+    private InformacoesPedidoDTO converter(Pedido pedido) {
         return InformacoesPedidoDTO.builder()
                 .id(pedido.getId())
                 .dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
@@ -58,10 +63,10 @@ private InformacoesPedidoDTO converter(Pedido pedido){
                 .status(pedido.getStatus().name())
                 .items(converter(pedido.getItems()))
                 .build();
+    }
 
-}
-private List<InformacaoPedidoDTO> converter(List<ItemPedido>items){
-        if(CollectionUtils.isEmpty(items)){
+    private List<InformacaoPedidoDTO> converter(List<ItemPedido> items) {
+        if (CollectionUtils.isEmpty(items)) {
             return Collections.EMPTY_LIST;
         }
         return items.stream().map(itemPedido -> InformacaoPedidoDTO.builder().descricaoProduto(itemPedido.getProduto().getDescricao())
@@ -69,5 +74,5 @@ private List<InformacaoPedidoDTO> converter(List<ItemPedido>items){
                 .quantidade(itemPedido.getQuantidade())
                 .build()
         ).collect(Collectors.toList());
-}
+    }
 }
