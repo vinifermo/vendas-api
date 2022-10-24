@@ -20,7 +20,8 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @NotEmpty (message = "Campo nome é obrigatorio")
+
+    @NotEmpty(message = "Campo nome é obrigatorio")
     private String nome;
 
     @NotEmpty(message = "Campo CPF é obrigatorio")
@@ -28,6 +29,6 @@ public class Cliente {
     private String cpf;
 
     @JsonIgnore
-    @OneToMany(mappedBy ="cliente")
+    @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos;
 }

@@ -21,5 +21,4 @@ public class PedidoDTO {
     private BigDecimal total;
 
     private List<ItemPedidoDTO> items;
-
 }

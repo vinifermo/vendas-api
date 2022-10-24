@@ -12,60 +12,60 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/cliente")
-public class        ClienteController {
+public class ClienteController {
     private final ClientesRepository clientesRepository;
 
     @GetMapping("/{id}")
-    public Cliente getClienteById( @PathVariable UUID id ){
+    public Cliente getClienteById(@PathVariable UUID id) {
         return clientesRepository.findById(id)
-                                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Cliente nao encontrado!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente nao encontrado!"));
     }
 
     @GetMapping
-    public List<Cliente> find (Cliente filtro){
+    public List<Cliente> find(Cliente filtro) {
         ExampleMatcher matcher = ExampleMatcher
-                                               .matching()
-                                               .withIgnoreCase()
-                                               .withStringMatcher(
-                                                       ExampleMatcher.StringMatcher.CONTAINING);
+                .matching()
+                .withIgnoreCase()
+                .withStringMatcher(
+                        ExampleMatcher.StringMatcher.CONTAINING);
 
-        Example example = Example.of(filtro,matcher);
-        List<Cliente>lista = clientesRepository.findAll(example);
+        Example example = Example.of(filtro, matcher);
+        List<Cliente> lista = clientesRepository.findAll(example);
         return clientesRepository.findAll(example);
 
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente save(@RequestBody @Valid Cliente cliente){
+    public Cliente save(@RequestBody @Valid Cliente cliente) {
         return clientesRepository.save(cliente);
     }
 
-    @DeleteMapping ("/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable UUID id){
-       clientesRepository.findById(id)
-               .map(cliente -> {
-                   clientesRepository.delete(cliente);
-                   return cliente;
-               })
-               .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Cliente nao encontrado!"));
+    public void deleteById(@PathVariable UUID id) {
+        clientesRepository.findById(id)
+                .map(cliente -> {
+                    clientesRepository.delete(cliente);
+                    return cliente;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente nao encontrado!"));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable UUID id, @RequestBody @Valid Cliente cliente){
-
+    public void update(@PathVariable UUID id, @RequestBody @Valid Cliente cliente) {
         clientesRepository
                 .findById(id)
                 .map(clienteExistente -> {
-                        cliente.setId(clienteExistente.getId());
-                        clientesRepository.save(cliente);
-                        return  clienteExistente;
-                }).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Cliente nao encontrado!") );
+                    cliente.setId(clienteExistente.getId());
+                    clientesRepository.save(cliente);
+                    return clienteExistente;
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Cliente nao encontrado!"));
     }
 }

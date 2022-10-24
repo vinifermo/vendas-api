@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class InformacoesPedidoDTO {
+
     private UUID id;
     private String nomeCliente;
     private String cpf;

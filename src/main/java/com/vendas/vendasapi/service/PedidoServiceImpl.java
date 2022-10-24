@@ -14,8 +14,6 @@ import com.vendas.vendasapi.repository.ItemPedidoRepository;
 import com.vendas.vendasapi.repository.PedidoRepository;
 import com.vendas.vendasapi.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -63,10 +61,10 @@ public class PedidoServiceImpl implements PedidoService {
     public void atualizarStatus(UUID id, StatusPedido statusPedido) {
         pedidoRepository
                 .findById(id)
-                .map(pedido ->  {
+                .map(pedido -> {
                     pedido.setStatus(statusPedido);
                     return pedidoRepository.save(pedido);
-                }).orElseThrow(()->new PedidoNaoEncontradoException() );
+                }).orElseThrow(() -> new PedidoNaoEncontradoException());
     }
 
     public Pedido getPedidoById(UUID id) {

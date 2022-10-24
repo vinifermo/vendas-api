@@ -13,5 +13,4 @@ public interface PedidoService {
     Optional<Pedido> obterPedidoCompleto(UUID id);
 
     void atualizarStatus(UUID id, StatusPedido statusPedido);
-
 }

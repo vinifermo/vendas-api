@@ -38,12 +38,7 @@ public class PedidoController {
     @GetMapping("{id}")
     @CrossOrigin(origins = "http://localhost:4200")
     public InformacoesPedidoDTO getById(@PathVariable UUID id) {
-        return pedidoService
-                .obterPedidoCompleto(id)
-                .map(pedido -> converter(pedido))
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido nao encontrado.")
-                );
+        return pedidoService.obterPedidoCompleto(id).map(pedido -> converter(pedido)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido nao encontrado."));
     }
 
     @PatchMapping("{id}")
@@ -54,25 +49,13 @@ public class PedidoController {
     }
 
     private InformacoesPedidoDTO converter(Pedido pedido) {
-        return InformacoesPedidoDTO.builder()
-                .id(pedido.getId())
-                .dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                .cpf(pedido.getCliente().getCpf())
-                .nomeCliente(pedido.getCliente().getNome())
-                .total(pedido.getTotal())
-                .status(pedido.getStatus().name())
-                .items(converter(pedido.getItems()))
-                .build();
+        return InformacoesPedidoDTO.builder().id(pedido.getId()).dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).cpf(pedido.getCliente().getCpf()).nomeCliente(pedido.getCliente().getNome()).total(pedido.getTotal()).status(pedido.getStatus().name()).items(converter(pedido.getItems())).build();
     }
 
     private List<InformacaoPedidoDTO> converter(List<ItemPedido> items) {
         if (CollectionUtils.isEmpty(items)) {
             return Collections.EMPTY_LIST;
         }
-        return items.stream().map(itemPedido -> InformacaoPedidoDTO.builder().descricaoProduto(itemPedido.getProduto().getDescricao())
-                .precoUnitario(itemPedido.getProduto().getPreco())
-                .quantidade(itemPedido.getQuantidade())
-                .build()
-        ).collect(Collectors.toList());
+        return items.stream().map(itemPedido -> InformacaoPedidoDTO.builder().descricaoProduto(itemPedido.getProduto().getDescricao()).precoUnitario(itemPedido.getProduto().getPreco()).quantidade(itemPedido.getQuantidade()).build()).collect(Collectors.toList());
     }
 }
